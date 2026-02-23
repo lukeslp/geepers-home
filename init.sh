@@ -77,13 +77,13 @@ info() { echo -e "${BLUE}[INFO]${NC}  $*"; }
 # Kept here so we know the setup without needing to SSH in.
 #
 # 1. sensor-playground-web.service
-#    - Runs: /bin/bash /home/coolhand/sensor-playground/launch.sh
-#    - WorkingDirectory: /home/coolhand/sensor-playground
-#    - User: coolhand
+#    - Runs: /bin/bash /home/pi/geepers-home/launch.sh
+#    - WorkingDirectory: /home/pi/geepers-home
+#    - User: pi (adjust to your username)
 #    - Restart: always (5s delay)
-#    - Environment: DREAMER_API_KEY=sk_15b17a24...
+#    - Requires: DREAMER_API_KEY in .env (see .env.example)
 #    - Provides: Web dashboard on port 5000
-#    - URL on LAN: http://192.168.0.228:5000
+#    - URL on LAN: http://<pi-lan-ip>:5000
 #
 # 2. vision-tunnel.service
 #    - Runs: ssh -L 5030:localhost:5030 -N -T dr.eamer.dev
@@ -126,7 +126,7 @@ info() { echo -e "${BLUE}[INFO]${NC}  $*"; }
 
 check_tunnel() {
     echo ""
-    info "Checking reverse SSH tunnel (VPS:2222 → Pi:22)..."
+    info "Checking reverse SSH tunnel (VPS:${PI_PORT} → Pi:22)..."
     if ssh -p "$PI_PORT" -o ConnectTimeout=5 -o BatchMode=yes "$PI_HOST" "echo ok" 2>/dev/null; then
         ok "Reverse tunnel is UP — Pi reachable at ${PI_HOST}:${PI_PORT}"
         return 0
@@ -135,7 +135,7 @@ check_tunnel() {
         echo ""
         echo "  The Pi initiates this tunnel. To fix:"
         echo "  1. Physical access to Pi, or"
-        echo "  2. Someone on the LAN: ssh coolhand@${PI_LAN_IP}"
+        echo "  2. Someone on the LAN: ssh ${PI_HOST%@*}@${PI_LAN_IP}"
         echo "  3. Then on Pi, restart the tunnel service:"
         echo "     sudo systemctl restart reverse-ssh-tunnel  # (or autossh service)"
         echo "     # or manually: ssh -R 2222:localhost:22 ${VPS_HOST} -N &"
@@ -206,9 +206,9 @@ show_help() {
     echo "  bash init.sh pi 'journalctl -u sensor-playground-web -n 20'"
     echo ""
     echo "SSH topology:"
-    echo "  VPS → Pi:   ssh -p 2222 coolhand@localhost"
-    echo "  LAN → Pi:   ssh coolhand@192.168.0.228"
-    echo "  LAN → Pi:   ssh coolhand@bronx-cheer.local"
+    echo "  VPS → Pi:   ssh -p ${PI_PORT} ${PI_HOST}"
+    echo "  LAN → Pi:   ssh ${PI_HOST%@*}@${PI_LAN_IP}"
+    echo "  LAN → Pi:   ssh ${PI_HOST%@*}@${PI_HOSTNAME}"
 }
 
 full_status() {
@@ -231,8 +231,8 @@ full_status() {
     echo ""
     echo "  Deploy + restart:  bash deploy.sh && bash deploy.sh --service restart"
     echo "  Follow logs:       bash deploy.sh --service logs"
-    echo "  SSH to Pi:         ssh -p 2222 coolhand@localhost"
-    echo "  Pi LAN:            http://192.168.0.228:5000"
+    echo "  SSH to Pi:         ssh -p ${PI_PORT} ${PI_HOST}"
+    echo "  Pi LAN:            http://${PI_LAN_IP}:${DASHBOARD_PORT}"
     echo ""
 }
 
