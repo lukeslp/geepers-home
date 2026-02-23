@@ -11,6 +11,16 @@ A Raspberry Pi sensor dashboard with three runtime modes: a Flask web dashboard,
 ![Status: WIP](https://img.shields.io/badge/status-WIP-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## Screenshots
+
+| Home | System |
+|------|--------|
+| ![Home tab — news ticker, sensor cards, camera](docs/screenshots/screenshot-home.png) | ![System tab — CPU, memory, disk, uptime, network](docs/screenshots/screenshot-system.png) |
+
+| Sensors | Chat |
+|---------|------|
+| ![Sensors tab — I2C sensor cards](docs/screenshots/screenshot-sensors.png) | ![Chat tab — LLM interface with sensor context](docs/screenshots/screenshot-chat.png) |
+
 ## Runtime Modes
 
 | Mode | Entry Point | What it is |
