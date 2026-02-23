@@ -13,11 +13,12 @@
 set -e
 
 # --- Configuration ---
-# From VPS: Pi is reachable via reverse SSH tunnel on port 2222
-# From LAN: Pi is reachable at bronx-cheer.local
-PI_HOST="${PI_HOST:-coolhand@localhost}"
+# Override with environment variables, or edit the defaults here.
+# From VPS: Pi is reachable via reverse SSH tunnel (PI_SSH_PORT)
+# From LAN: use PI_LAN_IP or the Pi's hostname directly
+PI_HOST="${PI_HOST:-pi@localhost}"
 PI_SSH_PORT="${PI_SSH_PORT:-2222}"
-PI_DIR="/home/coolhand/sensor-playground"
+PI_DIR="${PI_DIR:-/home/pi/geepers-home}"
 VPS_HOST="${VPS_HOST:-dr.eamer.dev}"
 VISION_PORT=5030
 
@@ -38,7 +39,9 @@ usage() {
     echo "  --kiosk install   Install Chromium kiosk autostart"
     echo ""
     echo "Environment:"
-    echo "  PI_HOST           Pi SSH target (default: pi@pistation.local)"
+    echo "  PI_HOST           Pi SSH target (default: pi@localhost via tunnel)"
+    echo "  PI_SSH_PORT       SSH port (default: 2222)"
+    echo "  PI_DIR            Project dir on Pi (default: /home/pi/geepers-home)"
     echo "  VPS_HOST          VPS hostname (default: dr.eamer.dev)"
 }
 
