@@ -33,11 +33,11 @@ A Raspberry Pi sensor dashboard with three runtime modes: a Flask web dashboard,
 
 - Reads 23 sensors: DHT11, DS18B20, PIR, tilt, reed, hall, flame, touch, button, knock, sound, light, BME280, TSL25911, LTR390, SGP40, ICM20948, soil moisture, sound level, light level, joystick, RGB LED, buzzer
 - Demo mode — realistic simulated readings for every sensor, no hardware required
-- LLM chat with live sensor context, proxied to `api.dr.eamer.dev/v1/llm/chat`
-- Browser voice input (MediaRecorder → Whisper STT at `api.dr.eamer.dev/v1/voice/transcribe`)
-- Scene description via USB webcam + vision model at `dr.eamer.dev/pivision/api/analyze`
-- SQLite time-series storage with adaptive-resolution history queries
-- Threshold alert system defined in `dashboard.yaml`
+- Chat about your environment using a language model — works with local Ollama or any OpenAI-compatible endpoint
+- Browser voice input (MediaRecorder → Whisper STT)
+- Scene description from USB webcam via a vision model
+- Sensor history stored in SQLite, auto-downsampled to hourly averages beyond 24h
+- Threshold alerts configured in `dashboard.yaml`
 - WiFi and Bluetooth scanning (requires passwordless sudo for `iw` and `hcitool`)
 - Weather via Open-Meteo (no API key), news via NYT RSS
 
@@ -80,7 +80,7 @@ dtoverlay=w1-gpio,gpiopin=12
 
 ## Architecture
 
-The web dashboard uses a plugin-based pub/sub framework:
+Under the hood it's a pub/sub framework — sensor threads push data, the SSE endpoint streams it to the browser:
 
 - **`WebEventBus`** — thread-safe pub/sub; background sensor threads publish, SSE endpoint streams to browser
 - **`DataSource`** ABC — subclasses implement `fetch()`, base handles polling + threading + publish
@@ -103,7 +103,7 @@ The chat interface proxies to a configurable endpoint that accepts a `provider` 
 
 The `provider` and `model` sent with each chat request are passed through as-is, so switching models is just a frontend config change.
 
-Voice STT and vision analysis currently use the dr.eamer.dev endpoints (`VPS_URL`). Swapping those for local alternatives (e.g. Whisper.cpp, LLaVA) is on the roadmap.
+Voice STT and vision analysis currently hit the dr.eamer.dev endpoints (`VPS_URL`). Local alternatives (Whisper.cpp, LLaVA) are planned.
 
 ## Adding Sensors
 
@@ -123,7 +123,7 @@ sudo systemctl status sensor-playground-web
 sudo journalctl -u sensor-playground-web -f
 
 # SSH to Pi through reverse tunnel
-ssh -p 2222 coolhand@localhost
+ssh -p 2222 pi@localhost
 ```
 
 The Pi runs the web dashboard as `sensor-playground-web.service`. Chromium runs in kiosk mode (Wayland/labwc) and auto-refreshes via `wtype -k F5` on deploy.
