@@ -1,0 +1,15 @@
+[Unit]
+Description=SSH tunnel to VPS vision API (port 5030)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+# Forward VPS port 5030 to localhost so dashboard can reach the vision API
+ExecStart=/usr/bin/ssh -L 5030:localhost:5030 -N -T -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes dr.eamer.dev
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+[Unit]
+Description=Sensor Playground — Raspberry Pi sensor dashboard
+After=graphical.target network-online.target
+Wants=graphical.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+WorkingDirectory=/home/pi/sensor-playground
+ExecStart=/usr/bin/python3 /home/pi/sensor-playground/main.py
+Restart=on-failure
+RestartSec=5
+# Give the display server time to start
+ExecStartPre=/bin/sleep 3
+
+[Install]
+WantedBy=graphical.target

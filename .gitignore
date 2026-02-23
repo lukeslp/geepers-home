@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Logs and data
+*.log
+*.csv
+data/*.csv
+data/logs/
+snapshots/
+
+# Virtual environment
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+.lgd-nfy0
+*.backup
+.claude/settings.local.json
+.env

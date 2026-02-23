@@ -1,0 +1,343 @@
+# Home Station Dashboard Configuration
+#
+# Pages define what cards appear on each screen.
+# Sources define where data comes from.
+# Cards subscribe to sources by source_id.
+#
+# To add a new card type, create a class in cards/ that inherits BaseCard,
+# decorate it with @register_card("typename"), and use it here.
+
+pages:
+  - name: "Environment"
+    cards:
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "temperature"
+        label: "Temperature"
+        unit: "\u00b0F"
+        convert: "c_to_f"
+        format: "{:.1f}"
+        color: "#e74c3c"
+        thresholds:
+          - [59, "#40a0ff"]
+          - [72, "#00d084"]
+          - [82, "#ffa726"]
+          - [210, "#ff5252"]
+
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "humidity"
+        label: "Humidity"
+        unit: "%"
+        format: "{:.0f}"
+        color: "#3498db"
+        thresholds:
+          - [30, "#40a0ff"]
+          - [50, "#00d084"]
+          - [70, "#ffa726"]
+          - [100, "#ff5252"]
+
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "pressure"
+        label: "Pressure"
+        unit: " hPa"
+        format: "{:.0f}"
+        color: "#95a5a6"
+
+      - type: "sensor"
+        source_id: "sensor.ltr390"
+        sensor_key: "ltr390"
+        field: "uvi"
+        label: "UV Index"
+        unit: ""
+        format: "{:.1f}"
+        color: "#8e44ad"
+        thresholds:
+          - [2, "#00d084"]
+          - [5, "#ffa726"]
+          - [7, "#ff9100"]
+          - [99, "#ff5252"]
+
+      - type: "sensor"
+        source_id: "sensor.sgp40"
+        sensor_key: "sgp40"
+        field: "voc_index"
+        label: "Air Quality"
+        unit: " VOC"
+        format: "{:.0f}"
+        color: "#27ae60"
+        thresholds:
+          - [100, "#00d084"]
+          - [150, "#f1c40f"]
+          - [250, "#ffa726"]
+          - [500, "#ff5252"]
+
+  - name: "System"
+    cards:
+      - type: "clock"
+        label: "Clock"
+        color: "#e0e0e0"
+
+      - type: "system"
+        source_id: "system.stats"
+        label: "CPU"
+        metric: "cpu_temp"
+        color: "#ff9800"
+
+      - type: "system"
+        source_id: "system.stats"
+        label: "Memory"
+        metric: "ram"
+        color: "#42a5f5"
+
+      - type: "system"
+        source_id: "system.stats"
+        label: "Disk"
+        metric: "disk"
+        color: "#66bb6a"
+
+      - type: "network"
+        source_id: "net.health"
+        label: "Ping"
+        metric: "ping"
+        color: "#42a5f5"
+
+      - type: "network"
+        source_id: "net.health"
+        label: "IP Address"
+        metric: "ip"
+        color: "#42a5f5"
+
+  - name: "Camera"
+    cards:
+      - type: "camera"
+        source_id: "camera.feed"
+        label: "Camera"
+        color: "#42a5f5"
+
+      - type: "vision"
+        source_id: "camera.vision"
+        label: "Scene"
+        color: "#ab47bc"
+
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "temperature"
+        label: "Indoor Temp"
+        format: "{:.1f}"
+        color: "#e74c3c"
+        thresholds:
+          - [15, "#40a0ff"]
+          - [22, "#00d084"]
+          - [28, "#ffa726"]
+          - [99, "#ff5252"]
+
+      - type: "clock"
+        label: "Clock"
+        color: "#b0b0b0"
+
+      - type: "network"
+        source_id: "net.health"
+        label: "IP Address"
+        metric: "ip"
+        color: "#42a5f5"
+
+      - type: "system"
+        source_id: "system.stats"
+        label: "CPU"
+        metric: "cpu_temp"
+        color: "#ff9800"
+
+  - name: "Weather"
+    cards:
+      - type: "weather"
+        source_id: "api.weather"
+        label: "Weather"
+        color: "#42a5f5"
+
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "temperature"
+        label: "Indoor Temp"
+        format: "{:.1f}"
+        color: "#e74c3c"
+        thresholds:
+          - [15, "#40a0ff"]
+          - [22, "#00d084"]
+          - [28, "#ffa726"]
+          - [99, "#ff5252"]
+
+      - type: "sensor"
+        source_id: "sensor.bme280"
+        sensor_key: "bme280"
+        field: "humidity"
+        label: "Indoor Humid"
+        format: "{:.0f}"
+        color: "#3498db"
+        thresholds:
+          - [30, "#40a0ff"]
+          - [50, "#00d084"]
+          - [70, "#ffa726"]
+          - [100, "#ff5252"]
+
+      - type: "network"
+        source_id: "net.health"
+        label: "VPS Latency"
+        metric: "ping"
+        color: "#42a5f5"
+
+      - type: "network"
+        source_id: "net.health"
+        label: "Throughput"
+        metric: "throughput"
+        color: "#66bb6a"
+
+      - type: "clock"
+        label: "Clock"
+        color: "#b0b0b0"
+
+# Data sources -- background threads that fetch and publish data
+sources:
+  - id: "sensor.bme280"
+    type: "sensor"
+    sensor_key: "bme280"
+
+  - id: "sensor.ltr390"
+    type: "sensor"
+    sensor_key: "ltr390"
+
+  - id: "sensor.sgp40"
+    type: "sensor"
+    sensor_key: "sgp40"
+
+  - id: "system.stats"
+    type: "system"
+    interval: 5
+
+  - id: "net.health"
+    type: "network"
+    interval: 30
+    ping_host: "dr.eamer.dev"
+
+  # USB webcam via ffmpeg (Logitech Brio 100)
+  - id: "camera.feed"
+    type: "camera"
+    device: "/dev/video0"
+    input_format: "mjpeg"
+    width: 320
+    height: 240
+    fps: 2
+    interval: 0.1
+    motion_threshold: 3.0
+    snapshot_interval: 300
+
+  # VPS vision API for scene description — ON-DEMAND ONLY
+  # Triggered via chat ("what does the camera see?") or camera tap
+  # Available providers: "xai" (grok-2-vision), "openai" (gpt-4o)
+  #- id: "camera.vision"
+  #  type: "vision"
+  #  endpoint: "https://dr.eamer.dev/pivision/api/analyze"
+  #  provider: "xai"
+  #  detail: "brief"
+  #  api_key: ""
+  #  interval: 60
+
+  # WiFi AP scanner — scans nearby networks every 60s
+  - id: "radio.wifi"
+    type: "wifi_scanner"
+    interval: 60
+    interface: "wlan0"
+
+  # Bluetooth device scanner — scans BLE + classic every 120s
+  - id: "radio.ble"
+    type: "bluetooth_scanner"
+    interval: 120
+
+  # Open-Meteo free weather API (no key needed)
+  # Goleta, CA
+  - id: "api.weather"
+    type: "weather"
+    latitude: 34.4275
+    longitude: -119.859
+    interval: 600
+
+  # NYT RSS headlines for news ticker (no API key needed)
+  - id: "news.headlines"
+    type: "news"
+    section: "home"
+    max_headlines: 8
+    interval: 900
+
+# Alert rules — threshold-based notifications with cooldown
+alerts:
+  - id: temp_high
+    field: temperature
+    condition: "> 30"
+    level: warn
+    message: "Temperature is {value}°C — consider opening a window"
+    cooldown: 600
+
+  - id: temp_low
+    field: temperature
+    condition: "< 15"
+    level: info
+    message: "Temperature dropped to {value}°C — getting chilly"
+    cooldown: 1800
+
+  - id: humidity_low
+    field: humidity
+    condition: "< 25"
+    level: info
+    message: "Humidity at {value}% — dry air can irritate skin"
+    cooldown: 1800
+
+  - id: humidity_high
+    field: humidity
+    condition: "> 70"
+    level: warn
+    message: "Humidity at {value}% — risk of mold growth"
+    cooldown: 1800
+
+  - id: voc_spike
+    field: voc_index
+    condition: "> 300"
+    level: critical
+    message: "Air quality degraded (VOC {value}) — ventilate the room"
+    cooldown: 300
+
+  - id: uv_high
+    field: uvi
+    condition: "> 6"
+    level: warn
+    message: "UV Index is {value} — wear sunscreen if going outside"
+    cooldown: 3600
+
+# View registry — native views only (iframe embeds can be added later)
+# Types: native (rendered by app.js), iframe (lazy-loaded external pages)
+views:
+  - id: home
+    label: Home
+    type: native
+    default: true
+
+  - id: news
+    label: News
+    type: native
+
+  - id: environment
+    label: Sensors
+    type: native
+
+  - id: system
+    label: System
+    type: native
+
+  - id: chat
+    label: Chat
+    type: native

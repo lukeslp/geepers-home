@@ -1,0 +1,21 @@
+[Unit]
+Description=Sensor Playground Web Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=coolhand
+Group=coolhand
+WorkingDirectory=/home/coolhand/sensor-playground
+ExecStart=/bin/bash /home/coolhand/sensor-playground/launch.sh
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Environment for LLM chat
+Environment=DREAMER_API_KEY=REDACTED
+
+[Install]
+WantedBy=multi-user.target

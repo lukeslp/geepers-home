@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiosk Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Dashboard</h1>
+            <div class="view-switcher">
+                <button class="view-btn active" data-view="sensors">Sensors</button>
+                <button class="view-btn" data-view="weather">Weather</button>
+                <button class="view-btn" data-view="air-quality">Air Quality</button>
+                <button class="view-btn" data-view="art">Art</button>
+                <button class="view-btn" data-view="admin">Admin</button>
+                <button class="view-btn" data-view="news">News</button>
+            </div>
+        </header>
+        <main class="content-area">
+            <div class="panel single-panel active" id="sensors-panel">
+                <iframe src="/sensors" title="Sensors Dashboard" class="view-iframe"></iframe>
+            </div>
+            <div class="panel single-panel" id="weather-panel">
+                <iframe src="" data-src="/weather" title="Weather Map" class="view-iframe lazy"></iframe>
+            </div>
+            <div class="panel single-panel" id="air-quality-panel">
+                <iframe src="" data-src="/air-quality" title="Air Quality Dashboard" class="view-iframe lazy"></iframe>
+            </div>
+            <div class="panel single-panel" id="art-panel">
+                <iframe src="" data-src="/art" title="Generative Art" class="view-iframe lazy"></iframe>
+            </div>
+            <div class="panel single-panel" id="admin-panel">
+                <iframe src="" data-src="/admin" title="Server Admin" class="view-iframe lazy"></iframe>
+            </div>
+            <div class="panel single-panel" id="news-panel">
+                <iframe src="" data-src="/news" title="News Ticker" class="view-iframe lazy"></iframe>
+            </div>
+        </main>
+        <footer class="chat-bar">
+            <input type="text" id="chat-input" placeholder="Type or speak...">
+            <button id="send-btn">Send</button>
+            <button id="voice-btn">Voice</button>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

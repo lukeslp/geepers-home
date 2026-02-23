@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=800, height=480, initial-scale=1, user-scalable=no">
+  <title>Geepers</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard" id="dashboard">
+  <!-- ─── HEADER ─── -->
+  <header class="header">
+    <span class="header-title">Geepers</span>
+
+    <!-- View tabs (populated by JS from /api/views) -->
+    <div class="view-tabs" id="view-tabs"></div>
+
+    <!-- Split mode toggle -->
+    <button class="split-toggle" id="split-toggle" aria-label="Toggle split view" title="Split view">&#9701;</button>
+
+    <!-- Chat mode back button (hidden by default) -->
+    <button class="chat-back-btn" id="chat-back-btn" aria-label="Back to dashboard" style="display:none">&#8592; Back</button>
+
+    <div class="header-status">
+      <span class="dot" id="status-dot"></span>
+      <button class="sensor-count-btn" id="sensor-count">0 sensors</button>
+      <span id="wifi-count" class="radio-badge" title="WiFi networks nearby">-- WiFi</span>
+      <span id="ble-count" class="radio-badge" title="Bluetooth devices nearby">-- BLE</span>
+      <span class="clock" id="clock">--:--</span>
+    </div>
+  </header>
+
+  <!-- ─── VIEWS CONTAINER ─── -->
+  <div class="views-container" id="views-container">
+
+    <!-- ─── HOME VIEW (default — comfort, sensors, camera, weather) ─── -->
+    <div class="view-panel active" id="view-home" data-view="home">
+      <!-- News ticker lives inside home view -->
+      <div class="news-ticker" id="news-ticker">
+        <span class="ticker-section" id="ticker-section"></span>
+        <span class="ticker-headline" id="ticker-headline">Loading headlines...</span>
+      </div>
+
+      <div class="sensor-grid" id="sensor-grid">
+        <!-- Comfort Score -->
+        <div class="sensor-card comfort-card" data-sensor="comfort">
+          <span class="sensor-label">Comfort</span>
+          <div class="comfort-gauge" id="comfort-gauge">
+            <svg viewBox="0 0 60 34" class="comfort-arc">
+              <path d="M 5 30 A 25 25 0 0 1 55 30" fill="none" stroke="var(--border)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 5 30 A 25 25 0 0 1 55 30" fill="none" stroke="var(--good)" stroke-width="4" stroke-linecap="round" id="comfort-arc-fill" stroke-dasharray="0 79"/>
+            </svg>
+            <span class="comfort-score" id="comfort-score">--</span>
+          </div>
+          <span class="comfort-label" id="comfort-label">Waiting...</span>
+        </div>
+
+        <!-- Temperature -->
+        <div class="sensor-card" data-sensor="temperature" data-live="true">
+          <span class="sensor-label">Temperature</span>
+          <span class="sensor-value">--<span class="sensor-unit">&deg;C</span></span>
+          <span class="sensor-trend trend-stable">&#9679; waiting</span>
+        </div>
+
+        <!-- Humidity -->
+        <div class="sensor-card" data-sensor="humidity" data-live="true">
+          <span class="sensor-label">Humidity</span>
+          <span class="sensor-value">--<span class="sensor-unit">%</span></span>
+          <span class="sensor-trend trend-stable">&#9679; waiting</span>
+        </div>
+
+        <!-- Air Quality -->
+        <div class="sensor-card" data-sensor="voc_index" data-live="true">
+          <span class="sensor-label">Air Quality</span>
+          <span class="sensor-value">--<span class="sensor-unit"> VOC</span></span>
+          <span class="sensor-trend trend-stable">&#9679; waiting</span>
+        </div>
+
+        <!-- UV Index -->
+        <div class="sensor-card" data-sensor="uvi" data-live="true">
+          <span class="sensor-label">UV Index</span>
+          <span class="sensor-value">--<span class="sensor-unit"></span></span>
+          <span class="sensor-trend trend-stable">&#9679; waiting</span>
+        </div>
+
+        <!-- Camera -->
+        <div class="sensor-card camera-card" id="camera-card" data-sensor="camera">
+          <img class="camera-thumb" id="camera-thumb" src="/api/camera/frame" alt="Camera">
+          <span class="camera-live" id="camera-live">LIVE</span>
+          <span class="sensor-label">Camera</span>
+          <span class="sensor-trend trend-stable">tap to view</span>
+        </div>
+
+        <!-- Weather -->
+        <div class="sensor-card weather-card" data-sensor="weather">
+          <div class="weather-left">
+            <span class="sensor-label">Outdoor</span>
+            <span class="weather-icon" id="weather-icon">--</span>
+            <span class="weather-desc" id="weather-desc">Loading...</span>
+          </div>
+          <div class="weather-right">
+            <div class="weather-compare">
+              <div class="weather-col">
+                <span class="weather-col-label">Out</span>
+                <span class="weather-temp" id="outdoor-temp">--</span>
+                <span class="weather-humid" id="outdoor-humid">--%</span>
+              </div>
+              <div class="weather-divider"></div>
+              <div class="weather-col">
+                <span class="weather-col-label">In</span>
+                <span class="weather-temp" id="indoor-temp">--</span>
+                <span class="weather-humid" id="indoor-humid">--%</span>
+              </div>
+            </div>
+            <div class="weather-meta">
+              <span id="weather-wind"></span>
+              <span id="weather-feels"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── NEWS VIEW ─── -->
+    <div class="view-panel" id="view-news" data-view="news">
+      <div class="news-feed" id="news-feed">
+        <div class="chat-msg system">Loading headlines...</div>
+      </div>
+    </div>
+
+    <!-- ─── ENVIRONMENT VIEW (all sensors detailed) ─── -->
+    <div class="view-panel" id="view-environment" data-view="environment">
+      <div class="environment-grid" id="environment-grid">
+        <!-- Populated by JS with all sensor readings -->
+      </div>
+    </div>
+
+    <!-- ─── SYSTEM VIEW ─── -->
+    <div class="view-panel" id="view-system" data-view="system">
+      <div class="system-grid" id="system-grid">
+        <!-- Populated by JS with system stats -->
+      </div>
+    </div>
+
+    <!-- ─── CHAT VIEW (also accessible from input bar) ─── -->
+    <div class="view-panel" id="view-chat" data-view="chat">
+      <!-- This panel activates the immersive chat mode -->
+    </div>
+
+    <!-- ─── SPLIT MODE DIVIDER ─── -->
+    <div class="panel-divider" id="panel-divider" style="display:none" title="Tap to cycle ratios"></div>
+
+    <!-- ─── CHAT MODE OVERLAY ─── -->
+    <div class="chat-mode" id="chat-mode" style="display:none">
+      <div class="context-strip" id="context-strip">
+        <!-- Sensor chips populated by JS -->
+      </div>
+      <div class="chat-area">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-msg system">Tap a sensor or ask a question</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── INPUT BAR ─── -->
+  <div class="input-bar" id="input-bar">
+    <div class="suggestion-chips" id="suggestion-chips" style="display:none">
+      <button class="chip" data-q="What's the air quality like?">Air quality?</button>
+      <button class="chip" data-q="Is the temperature comfortable?">Comfortable?</button>
+      <button class="chip" data-q="Describe what the camera sees">Camera view</button>
+      <button class="chip" data-q="Show me the weather forecast">Weather?</button>
+    </div>
+    <div class="input-row">
+      <button class="mic-btn" id="mic-btn" aria-label="Voice input" title="Tap to speak">MIC</button>
+      <div class="chat-input-wrap">
+        <input type="text" class="chat-input" id="chat-input"
+               placeholder="Ask about your environment..."
+               autocomplete="off" enterkeyhint="send">
+        <button class="send-btn" id="send-btn" aria-label="Send" disabled>&#9654;</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CAMERA OVERLAY ─── -->
+<div class="camera-overlay" id="camera-overlay" style="display:none">
+  <div class="camera-overlay-content">
+    <div class="camera-overlay-header">
+      <span class="camera-overlay-title">Camera</span>
+      <button class="camera-overlay-close" id="camera-overlay-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="camera-overlay-body">
+      <img class="camera-feed" id="camera-feed" src="/api/camera/frame" alt="Live camera feed">
+      <div class="camera-side">
+        <button class="camera-describe-btn" id="camera-describe-btn">Describe Scene</button>
+        <div class="camera-description" id="camera-description">Tap "Describe Scene" to analyze what the camera sees.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── RADIO DETAIL OVERLAY ─── -->
+<div class="radio-overlay" id="radio-overlay" style="display:none">
+  <div class="radio-overlay-content">
+    <div class="radio-overlay-header">
+      <span class="radio-overlay-title" id="radio-overlay-title">WiFi Networks</span>
+      <button class="radio-overlay-close" id="radio-overlay-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="radio-overlay-body" id="radio-overlay-body"></div>
+  </div>
+</div>
+
+<!-- ─── ALL SENSORS OVERLAY ─── -->
+<div class="sensor-overlay" id="sensor-overlay" style="display:none">
+  <div class="sensor-overlay-content">
+    <div class="sensor-overlay-header">
+      <span class="sensor-overlay-title">All Sensors</span>
+      <button class="sensor-overlay-close" id="sensor-overlay-close" aria-label="Close">&times;</button>
+    </div>
+    <div class="sensor-overlay-body" id="sensor-overlay-body"></div>
+  </div>
+</div>
+
+<!-- ─── ONSCREEN KEYBOARD ─── -->
+<div class="osk" id="osk" style="display:none">
+  <div class="osk-row">
+    <button class="osk-key" data-key="q">q</button>
+    <button class="osk-key" data-key="w">w</button>
+    <button class="osk-key" data-key="e">e</button>
+    <button class="osk-key" data-key="r">r</button>
+    <button class="osk-key" data-key="t">t</button>
+    <button class="osk-key" data-key="y">y</button>
+    <button class="osk-key" data-key="u">u</button>
+    <button class="osk-key" data-key="i">i</button>
+    <button class="osk-key" data-key="o">o</button>
+    <button class="osk-key" data-key="p">p</button>
+  </div>
+  <div class="osk-row">
+    <button class="osk-key" data-key="a">a</button>
+    <button class="osk-key" data-key="s">s</button>
+    <button class="osk-key" data-key="d">d</button>
+    <button class="osk-key" data-key="f">f</button>
+    <button class="osk-key" data-key="g">g</button>
+    <button class="osk-key" data-key="h">h</button>
+    <button class="osk-key" data-key="j">j</button>
+    <button class="osk-key" data-key="k">k</button>
+    <button class="osk-key" data-key="l">l</button>
+  </div>
+  <div class="osk-row">
+    <button class="osk-key osk-shift" data-key="shift" id="osk-shift">&#8679;</button>
+    <button class="osk-key" data-key="z">z</button>
+    <button class="osk-key" data-key="x">x</button>
+    <button class="osk-key" data-key="c">c</button>
+    <button class="osk-key" data-key="v">v</button>
+    <button class="osk-key" data-key="b">b</button>
+    <button class="osk-key" data-key="n">n</button>
+    <button class="osk-key" data-key="m">m</button>
+    <button class="osk-key osk-bksp" data-key="backspace">&#9003;</button>
+  </div>
+  <div class="osk-row">
+    <button class="osk-key osk-num" data-key="numbers">123</button>
+    <button class="osk-key osk-space" data-key=" ">space</button>
+    <button class="osk-key osk-send" data-key="send">Send</button>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
