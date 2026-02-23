@@ -155,7 +155,7 @@ Chromium kiosk uses `--use-fake-ui-for-media-stream` for auto mic permissions. T
 
 `CameraSource` captures raw RGB24 frames from USB webcam via ffmpeg subprocess, converts to PIL Image, runs numpy frame differencing for motion detection, saves periodic snapshots.
 
-`VisionSource` POSTs camera JPEGs to `https://dr.eamer.dev/pivision/api/analyze` for scene description via xAI (grok-2-vision) or OpenAI (gpt-4o). Currently commented out in `dashboard.yaml` (on-demand only).
+`VisionSource` POSTs camera JPEGs to `https://dr.eamer.dev/pivision/api/analyze` for scene description via a vision model. Currently commented out in `dashboard.yaml` (on-demand only).
 
 ### GPIO Abstraction (`sensors/gpio_utils.py`)
 
