@@ -4,7 +4,7 @@ A Raspberry Pi sensor dashboard with three runtime modes: a Flask web dashboard,
 
 > **Work in progress.** The web dashboard (v4.1) is the active development path. The tkinter modes still work but are no longer the focus.
 
-> **Ecosystem dependency.** LLM chat, voice transcription, and vision analysis rely on the API ecosystem running at [dr.eamer.dev](https://dr.eamer.dev/code/api). Without access to those endpoints the dashboard still works for local sensor data, but chat, voice, and camera scene description are unavailable.
+> **LLM backend.** Designed to run with a local [Ollama](https://ollama.com) instance — point `CHAT_ENDPOINT` at your Ollama server and no cloud dependency is needed for chat. Currently wired to the [dr.eamer.dev API gateway](https://dr.eamer.dev/code/api) which supports Ollama, Anthropic, OpenAI, xAI, Mistral, and others. Without a configured endpoint the dashboard works fine for local sensor data; chat, voice, and camera scene description are just unavailable.
 
 ![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue)
 ![Raspberry Pi](https://img.shields.io/badge/platform-Raspberry%20Pi-red)
@@ -91,17 +91,19 @@ All sources and cards self-register via `@register_source` / `@register_card` de
 
 The Pi connects to the VPS via a reverse SSH tunnel. `deploy.sh` rsyncs code and can restart the systemd service and refresh Chromium (kiosk mode, Wayland).
 
-## VPS Integration
+## LLM Backend
 
-The Pi offloads compute-heavy work to dr.eamer.dev:
+The chat interface proxies to a configurable endpoint that accepts a `provider` + `model` field, so any backend works:
 
-| Feature | Endpoint |
-|---------|----------|
-| LLM chat | `https://api.dr.eamer.dev/v1/llm/chat` |
-| Voice STT | `https://api.dr.eamer.dev/v1/voice/transcribe` |
-| Vision analysis | `https://dr.eamer.dev/pivision/api/analyze` |
+| Provider | How to use |
+|----------|-----------|
+| **Ollama** (recommended, local) | Run Ollama on a Pi or LAN machine, set `CHAT_ENDPOINT=http://your-ollama-host:11434/api/chat` |
+| **dr.eamer.dev gateway** (default) | Supports Ollama, Anthropic, OpenAI, xAI, Mistral — set `DREAMER_API_KEY` |
+| **Any OpenAI-compatible API** | Set `CHAT_ENDPOINT` to any endpoint that accepts the same request shape |
 
-Set `VPS_URL` env var to override the base URL (default: `https://api.dr.eamer.dev`).
+The `provider` and `model` sent with each chat request are passed through as-is, so switching models is just a frontend config change.
+
+Voice STT and vision analysis currently use the dr.eamer.dev endpoints (`VPS_URL`). Swapping those for local alternatives (e.g. Whisper.cpp, LLaVA) is on the roadmap.
 
 ## Adding Sensors
 
