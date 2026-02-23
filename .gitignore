@@ -15,6 +15,9 @@ build/
 data/*.csv
 data/logs/
 snapshots/
+*.db
+*.db-shm
+*.db-wal
 
 # Virtual environment
 .venv/
