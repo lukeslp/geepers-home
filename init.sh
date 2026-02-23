@@ -48,13 +48,14 @@ set -euo pipefail
 #
 
 # --- Configuration ---
-PI_HOST="coolhand@localhost"
-PI_PORT=2222
-PI_DIR="/home/coolhand/sensor-playground"
-PI_LAN_IP="192.168.0.228"
-PI_HOSTNAME="bronx-cheer.local"
-VPS_HOST="dr.eamer.dev"
-DASHBOARD_PORT=5000
+# Override any of these with environment variables
+PI_HOST="${PI_HOST:-pi@localhost}"
+PI_PORT="${PI_PORT:-2222}"
+PI_DIR="${PI_DIR:-/home/pi/geepers-home}"
+PI_LAN_IP="${PI_LAN_IP:-raspberrypi.local}"
+PI_HOSTNAME="${PI_HOSTNAME:-raspberrypi.local}"
+VPS_HOST="${VPS_HOST:-dr.eamer.dev}"
+DASHBOARD_PORT="${DASHBOARD_PORT:-5000}"
 
 # --- Colors ---
 RED='\033[0;31m'

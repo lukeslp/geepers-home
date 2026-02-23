@@ -5,17 +5,18 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=coolhand
-Group=coolhand
-WorkingDirectory=/home/coolhand/sensor-playground
-ExecStart=/bin/bash /home/coolhand/sensor-playground/launch.sh
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/geepers-home
+ExecStart=/bin/bash /home/pi/geepers-home/launch.sh
 Restart=always
 RestartSec=5
 StandardOutput=journal
 StandardError=journal
 
-# Environment for LLM chat
-Environment=DREAMER_API_KEY=REDACTED
+# API key for LLM chat, voice, and vision — loaded from .env by launch.sh
+# Alternatively set here: Environment=DREAMER_API_KEY=your_key_here
+# Get access at https://dr.eamer.dev/code/api
 
 [Install]
 WantedBy=multi-user.target

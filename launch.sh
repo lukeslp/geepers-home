@@ -8,8 +8,19 @@
 
 cd "$(dirname "$0")"
 
-# API gateway key for LLM chat
-export DREAMER_API_KEY="REDACTED"
+# Load .env if present (never commit .env — put your DREAMER_API_KEY there)
+if [ -f .env ]; then
+    set -a
+    # shellcheck source=/dev/null
+    source .env
+    set +a
+fi
+
+# DREAMER_API_KEY must be set for LLM chat, voice, and vision to work.
+# Get access at https://dr.eamer.dev/code/api
+if [ -z "${DREAMER_API_KEY:-}" ]; then
+    echo "[warn] DREAMER_API_KEY not set — chat/voice/vision will be unavailable"
+fi
 
 # Legacy tkinter mode
 if [ "$1" = "--tkinter" ]; then
